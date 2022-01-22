@@ -14,8 +14,8 @@ import torch
 
 def fitness(x):
     # Model fitness as a weighted combination of metrics
-    w = [0.0, 0.0, 0.1, 0.9]  # weights for [P, R, mAP@0.5, mAP@0.5:0.95]
-    return (x[:, :4] * w).sum(1)
+    w = [0.0, 0.0, 0.0, 0.3, 0.7]  # weights for [P, R, mAP@0.5, mAP@0.5:0.95], F2@0.3:0.8
+    return (x[:, :5] * w).sum(1)
 
 
 def ap_per_class(tp, conf, pred_cls, target_cls, plot=False, save_dir='.', names=(), eps=1e-16):
@@ -70,7 +70,9 @@ def ap_per_class(tp, conf, pred_cls, target_cls, plot=False, save_dir='.', names
                     py.append(np.interp(px, mrec, mpre))  # precision at mAP@0.5
 
     # Compute F1 (harmonic mean of precision and recall)
-    f1 = 2 * p * r / (p + r + eps)
+    # f1 = 2 * p * r / (p + r + eps)
+    f1 = 5 * p * r / (4*p + r + eps)
+
     names = [v for k, v in names.items() if k in unique_classes]  # list: only classes that have data
     names = {i: v for i, v in enumerate(names)}  # to dict
     if plot:
